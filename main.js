@@ -6,7 +6,7 @@
 /*   By: tjukmong <tjukmong@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 00:37:09 by tjukmong          #+#    #+#             */
-/*   Updated: 2023/03/01 15:08:59 by tjukmong         ###   ########.fr       */
+/*   Updated: 2023/03/01 18:36:52 by tjukmong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ function initTable (table_id, data) {
 		tr.append(th);
 	}
 	tr.firstChild.innerHTML += ` [${data.length}]`;
-	console.log(tr.firstChild.innerHTML);
 	document.getElementById(table_id).append(tr);
 }
 
