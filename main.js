@@ -6,7 +6,7 @@
 /*   By: tjukmong <tjukmong@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 00:37:09 by tjukmong          #+#    #+#             */
-/*   Updated: 2023/03/01 15:02:06 by tjukmong         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:08:59 by tjukmong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,14 @@ async function loadTable () {
 		addTableRow("data_table", data.model[i]);
 }
 
-loadTable();
-setInterval(loadTable, 2 * 60 * 1000);
+document.getElementById("route").addEventListener("keypress", function(ev) {
+	if (ev.key === "Enter")
+		loadTable();
+});
 
-document.getElementById("send_request").addEventListener("click", function(){
+document.getElementById("send_request").addEventListener("click", function() {
 	loadTable();
 });
+
+loadTable();
+setInterval(loadTable, 2 * 60 * 1000);
