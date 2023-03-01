@@ -6,7 +6,7 @@
 /*   By: tjukmong <tjukmong@student.42bangkok.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 00:37:09 by tjukmong          #+#    #+#             */
-/*   Updated: 2023/03/01 00:45:59 by tjukmong         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:02:06 by tjukmong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 async function fetchData(serverHost, route)
 {
-	const	res = await fetch(`${serverHost}/api/${route}`);
+	const	res = await fetch(serverHost + route);
+	if (!res.ok)
+		return res;
 	const	data = await res.json();
 	return data;
 }
@@ -29,48 +31,50 @@ function encodeDataHTML(data) {
 	});
 }
 
-function initTable (table_id) {
-	document.getElementById(table_id).innerHTML = `
-		<tr class="table-head">
-			<th>ID</th>
-			<th>Intra ID</th>
-			<th>Favourite language</th>
-			<th>Favourite food</th>
-			<th>Favourite color</th>
-			<th>Created at</th>
-			<th>Updated at</th>
-		</tr>
-	`;
+function initTable (table_id, data) {
+	if (!data.length)
+	{
+		document.getElementById(table_id).innerHTML = "Empty database: no data.";
+		return ;
+	}
+	const	keys = Object.keys(data[0]);
+	let		tr = document.createElement("tr");
+	for (let i in keys) {
+		let	th = document.createElement("th");
+		th.innerText = keys[i];
+		tr.append(th);
+	}
+	tr.firstChild.innerHTML += ` [${data.length}]`;
+	console.log(tr.firstChild.innerHTML);
+	document.getElementById(table_id).append(tr);
 }
 
 function addTableRow (table_id, data) {
 	encodeDataHTML(data);
-	const template_literal = `
-		<tr class="_data">
-			<td>${data.id}</td>
-			<td>${data.intra_id}</td>
-			<td>${data.favorite_language}</td>
-			<td>${data.favorite_food}</td>
-			<td>${data.favorite_color}</td>
-			<td>${data.created_at}</td>
-			<td>${data.updated_at}</td>
-		</tr>
-	`;
-	document.getElementById(table_id).innerHTML += template_literal;
+	const	keys = Object.keys(data);
+	let		tr = document.createElement("tr");
+	for (let i in keys) {
+		let	td = document.createElement("td");
+		td.innerText = data[keys[i]];
+		tr.append(td);
+	}
+	document.getElementById(table_id).append(tr);
 }
 
 async function loadTable () {
-
-	const data = await fetchData("http://10.19.245.52:6969", "users");
-
-	if (!data)
-		return alert("Failed to fetch data!");
-
-	initTable("api_user");
+	const route = document.getElementById("route").value;
+	const data = await fetchData("http://127.0.0.1:6969", route);
+	document.getElementById("data_table").innerHTML = "";
+	if ("ok" in data && !data.ok)
+		return alert(`Error ${data.status}: ${data.statusText}`);
+	initTable("data_table", data.model);
 	for (let i in data.model)
-		addTableRow("api_user", data.model[i]);
-
+		addTableRow("data_table", data.model[i]);
 }
 
 loadTable();
 setInterval(loadTable, 2 * 60 * 1000);
+
+document.getElementById("send_request").addEventListener("click", function(){
+	loadTable();
+});
